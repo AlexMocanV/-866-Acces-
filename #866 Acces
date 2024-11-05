@@ -1,0 +1,67 @@
+#include <bits/stdc++.h>
+std::ifstream fin("acces.in");
+std::ofstream fout("acces.out");
+int n,m;
+bool bun(int i,int j)
+{
+    return 1<=i&&1<=j&&j<=m&&i<=n;
+}
+int16_t dx[]={-1,1,0,0};
+int16_t dy[]={0,0,-1,1};
+char mat[1001][1001];
+std::vector<std::vector<int>>drum;
+void lee(int istart,int jstart){
+    std::queue<std::pair<int,int>>q;
+    q.push(std::make_pair(istart,jstart));
+    drum[istart][jstart]=0;
+    while(!q.empty())
+    {
+        int x=q.front().first;
+        int y=q.front().second;
+        q.pop();
+        for(int i=0;i<4;i++)
+        {
+            if((bun(dx[i]+x,dy[i]+y))&&mat[dx[i]+x][dy[i]+y]!='#'&&mat[dx[i]+x][dy[i]+y]!='P'&&drum[dx[i]+x][dy[i]+y]==0)
+            {
+                drum[dx[i]+x][dy[i]+y]=drum[x][y]+1;
+                q.push(std::make_pair(dx[i]+x,dy[i]+y));
+            }
+        }
+    }
+}
+int main()
+{
+    int Pi,Pj;
+    fin>>n>>m;
+    drum.resize(n+1);
+    for(int i=1;i<=n;i++){
+        drum[i].resize(m+1);
+        for(int j=1;j<=m;j++)
+        {    
+            fin>>mat[i][j];
+            if(mat[i][j]=='P')
+            {
+                Pi=i;Pj=j;
+            }
+        }
+    }
+    lee(Pi,Pj);
+    for(int i=1;i<=n;i++)
+    {
+        for(int j=1;j<=m;j++)
+        {
+            if(mat[i][j]=='#'||(mat[i][j]=='-'&&drum[i][j]==0))
+            {
+                drum[i][j]=-1;
+            }
+        }
+    }
+    for(int i=1;i<=n;i++,fout<<'\n')
+    {
+        for(int j=1;j<=m;j++)
+        {
+            fout<<drum[i][j]<<' ';
+        }
+    }
+    return 0;
+}
